@@ -1,0 +1,30 @@
+
+ void main() {
+ string fn=input_box("File name", "Introduzca el nombre del archivo que desea revisar:");
+ file f; f.open(fn, "r");
+ int quotes=0; int braces=0; int parentheses=0; int brackets=0;
+ string text=f.read(0);
+ for(uint i=0; i<text.length(); i++) {
+ if(text[i]=="\"") {
+ if((i>0)&&(text[i-1]=="\\")) continue;
+ quotes++;
+ }
+  else if(text[i]=="(") parentheses++;
+ else if(text[i]==")") parentheses--;
+ else if(text[i]=="{") braces++;
+ else if(text[i]=="}") braces--;
+ else if(text[i]=="[") brackets++;
+ else if(text[i]=="]") brackets--;
+ if((braces<0)||(parentheses<0)||(brackets<0)) {
+alert("Números negativos!", " Hay demasiados " + text[i] + ", iniciando desde " + i + ". ");
+ string context="";
+ uint j=0;
+ if(i<10) j=0; else j=i-10;
+ for(j=j; (j<i+10)&&(j<text.length()); j++) context += text[j];
+ clipboard_copy_text(context);
+ alert("Contexto", context);
+ if(braces<0) braces=0; if(brackets<0) brackets=0; if(parentheses<0) parentheses=0;
+ }// Catch mismatches in the wrong direction
+ }// Meepers.
+ alert("Resultados", "Vale. En tu harchivo hay: " + quotes + " comillas.\n, " + braces + " llaves sin cerrar, " + parentheses + " Paréntesis sin cerrar, y " + brackets + " corchetes sin cerrar. ");
+}

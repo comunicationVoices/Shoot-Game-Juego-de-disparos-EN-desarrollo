@@ -1,0 +1,97 @@
+#include"sound_pool.bgt";
+sound_pool sonido_disparo;
+sound arma_carga;
+timer contador;
+// clase para arma, no aplicable a un juego ya que la clase es meramente didáctica y no contempla muchas cosas tales como uso del item en inventario, incluso esto no debería estar en una clase, aunque nada está dicho
+// por favor, intenta ponerle los sonidos en el directorio sounds, para que puedas oír lo que ocurre y que no les de errores de compilación. 
+// la ruta de los sonidos está presente en la línea. arma pmd(12, 0, 150, "sounds/pmd_sound.ogg", "sounds/pmd_load.ogg", "pmd");
+// usa s para activar la clase, r para cargar el arma, d para descargarla, m para ver la munición en el arma, x para salir de la clase, y f4 para salir del programa.
+// aunque originalmente la clase está escrita en inglés, he cambiado todos los nombres de variables y parámetros posibles para hacerlo mas fácil de entender
+class arma
+{
+int max_municion;
+int total_municion;
+int velocidad;
+string sonido_disparo_ruta;
+string sonido_carga_ruta;
+string arma_nombre;
+arma(int max_municion, int total_municion, int velocidad, string sonido_disparo_ruta, string sonido_carga_ruta, string arma_nombre)
+{
+this.max_municion=max_municion;
+this.total_municion=total_municion;
+this.velocidad=velocidad;
+this.sonido_disparo_ruta=sonido_disparo_ruta;
+this.sonido_carga_ruta=sonido_carga_ruta;
+this.arma_nombre=arma_nombre;
+}
+void cargar(int max_municion)
+{
+if(total_municion==0)
+{
+total_municion=max_municion;
+arma_carga.load(sonido_carga_ruta);
+arma_carga.play_wait();
+arma_carga.close();
+}
+}
+void descargar()
+{
+if(total_municion>0)
+{
+total_municion=0;
+}
+}
+void tirar()
+{
+if(total_municion>0 && contador.elapsed>=velocidad)
+{
+sonido_disparo.play_stationary(sonido_disparo_ruta, false);
+total_municion--;
+contador.restart();
+}
+}
+}
+void main()
+{
+show_game_window("Preview game");
+while(true)
+{
+wait(5);
+if(key_pressed(KEY_S))
+{
+game();
+}
+if(key_pressed(KEY_F4))
+{
+exit();
+}
+}
+}
+void game()
+{
+arma pmd(18, 0, 110, "sounds/pmd_sound.ogg", "sounds/pmd_load.wav", "pmd");
+while(true)
+{
+wait(5);
+if(key_pressed(KEY_R))
+{
+pmd.cargar(pmd.max_municion);
+}
+if(key_pressed(KEY_D))
+{
+pmd.descargar();
+}
+if(key_pressed(KEY_M))
+{
+screen_reader_speak(4, pmd.total_municion);
+}
+if(key_down(KEY_LCONTROL))
+{
+pmd.tirar();
+}
+if(key_pressed(KEY_X))
+{
+main();
+}
+}
+}
